@@ -1,0 +1,40 @@
+{
+    "name": "Python Dev",
+    // "image": "docker.io/rkrispin/forecast-poc:0.0.0.9011",
+    "build": {
+        "dockerfile": "Dockerfile.airflow",
+        "context": ".",
+        "args": {
+            "AIRFLOW_HOME": "/airflow",
+            "AIRFLOW_VERSION": "2.9.1",
+            "VENV_NAME": "forecasting-poc",
+            "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/forecasting-poc/bin/python3",
+                "python.selectInterpreter": "/opt/forecasting-poc/bin/python3"
+            },
+            "extensions": [
+                "quarto.quarto",
+                "ms-azuretools.vscode-docker",
+                "ms-python.python",
+                "ms-vscode-remote.remote-containers",
+                "yzhang.markdown-all-in-one",
+                "redhat.vscode-yaml",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    },
+    "mounts": [
+        "source=/Users/ramikrispin/Personal/poc/eia-airflow/airflow/dags,target=/airflow/dags,type=bind,consistency=cache",
+        "source=/Users/ramikrispin/Personal/poc/eia-airflow/airflow/scripts,target=/airflow/scripts,type=bind,consistency=cache",
+        // "source=/Users/ramikrispin/Personal/poc/eia-poc/airflow/logs,target=/airflow/logs,type=bind,consistency=cache",
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "remoteEnv": {
+        "EIA_API_KEY": "${localEnv:EIA_API_KEY}"
+    }
+}
