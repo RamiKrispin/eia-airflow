@@ -1,0 +1,15 @@
+artifact_uri: file:///scripts/airflow/mlruns/7b5474620fcd4fcdbca7015ca8723204/artifacts
+end_time: 1717068164398
+entry_point_name: ''
+experiment_id: '888824980765390149'
+lifecycle_stage: active
+run_id: 7b5474620fcd4fcdbca7015ca8723204
+run_name: 2024-05-30 11:22 UTC
+run_uuid: 7b5474620fcd4fcdbca7015ca8723204
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1717068164345
+status: 3
+tags: []
+user_id: root
