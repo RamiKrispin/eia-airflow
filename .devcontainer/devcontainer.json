@@ -8,7 +8,13 @@
             "AIRFLOW_HOME": "/airflow",
             "AIRFLOW_VERSION": "2.9.1",
             "VENV_NAME": "forecasting-poc",
-            "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
+            "AIRFLOW__CORE__LOAD_EXAMPLES": "False",
+            "USERNAME": "admin",
+            "FIRST": "Rami",
+            "LAST": "Krispin",
+            "ROLE": "Admin",
+            "PASSWORD": "${localEnv:AIRFLOW_PASSWORD:pass}",
+            "EMAIL": "my_email@domain.com"
         }
     },
     "customizations": {

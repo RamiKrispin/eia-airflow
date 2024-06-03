@@ -4,6 +4,12 @@ ARG AIRFLOW_HOME="/airflow"
 ARG AIRFLOW_VERSION="2.9.1"
 ARG AIRFLOW__CORE__LOAD_EXAMPLES=False
 ARG VENV_NAME="forecasting-poc"
+ARG USERNAME="admin"
+ARG FIRST="Rami"
+ARG LAST="Krispin"
+ARG ROLE="Admin"
+ARG PASSWORD="pass"
+ARG EMAIL="my_email@domain.co"
 
 ENV AIRFLOW_HOME=$AIRFLOW_HOME
 ENV AIRFLOW_VERSION=$AIRFLOW_VERSION
@@ -12,5 +18,5 @@ ENV VENV_NAME=$VENV_NAME
 
 RUN mkdir $AIRFLOW_HOME
 COPY install_airflow.sh /
-RUN bash /install_airflow.sh $VENV_NAME
+RUN bash /install_airflow.sh $VENV_NAME $USERNAME $FIRST $LAST $ROLE $PASSWORD $EMAIL
 
