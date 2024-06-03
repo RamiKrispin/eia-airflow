@@ -12,14 +12,24 @@ default_args = {
     "owner" : "Rami"
 }
 
+# Parameters
+env = {
+"experiment_name": "data_refresh",
+"mlflow_path": "file:///scripts/airflow/mlruns",
+"tags": {"type": "datarefresh", "version": "0.0.0.9000"},
+"api_routh": "electricity/rto/region-data/",
+"api_path": "electricity/rto/region-data/data",
+"eia_api_key": os.getenv("EIA_API_KEY"),
+"data_folder": "scripts/airflow/data",
+"facets": {
+    "respondent": "US48",
+    "type": "D"
+},
+"offset": 7 * 24
+}
 
-
-def put_values_using_xcom(**kwargs):
-    test_msg = 'the_message'
-    print("message to push: '%s'" % test_msg)
-    ti = kwargs["ti"]
-    ti.xcom_push(key="Test_Message", value=test_msg)
-
+env2 = env
+env2["xcom"] = "{{ ti.xcom_pull(task_ids='task_A') }}"
 
 EIA_API_KEY = os.getenv('EIA_API_KEY')
 
@@ -36,65 +46,70 @@ with DAG(
     tags = ["test", "bash", "python"],
     template_searchpath = "/airflow/scripts/"
 ) as dag:
-
     taskA = DockerOperator(
         task_id = "task_A",
         image = "docker.io/rkrispin/forecast-poc:0.0.0.9011",
-        command = "/opt/forecasting-poc/bin/python3.10 /scripts/00_check_status.py",
+        command = "/opt/forecasting-poc/bin/python3.10 /scripts/00_init_experiment.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",
         api_version="auto",
         xcom_all= False,
         cpus = 1,
         mount_tmp_dir= False,
-        environment={"EIA_API_KEY": os.getenv("EIA_API_KEY")},
+        environment= env,
         mounts= [
             Mount(source = "/Users/ramikrispin/Personal/poc/eia-airflow/", target = "/scripts", type = "bind")
         ]
     )
-
 
     taskB = DockerOperator(
         task_id = "task_B",
         image = "docker.io/rkrispin/forecast-poc:0.0.0.9011",
-        command = "/opt/forecasting-poc/bin/python3.10 /scripts/01_refresh_data.py",
+        command = "/opt/forecasting-poc/bin/python3.10 /scripts/01_check_status.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",
         api_version="auto",
         xcom_all= False,
         cpus = 1,
         mount_tmp_dir= False,
-        environment={"EIA_API_KEY": os.getenv("EIA_API_KEY"),
-                     'REFRESH': "{{ ti.xcom_pull(task_ids='task_A') }}"},
+        environment= env2,
         mounts= [
             Mount(source = "/Users/ramikrispin/Personal/poc/eia-airflow/", target = "/scripts", type = "bind")
         ]
     )
+
 
     taskC = DockerOperator(
         task_id = "task_C",
         image = "docker.io/rkrispin/forecast-poc:0.0.0.9011",
-        command = "/opt/forecasting-poc/bin/python3.10 /scripts/02_refresh_forecast.py",
+        command = "/opt/forecasting-poc/bin/python3.10 /scripts/02_refresh_data.py",
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",
         api_version="auto",
         xcom_all= False,
         cpus = 1,
         mount_tmp_dir= False,
-        environment={"EIA_API_KEY": os.getenv("EIA_API_KEY"),
-                     'REFRESH': "{{ ti.xcom_pull(task_ids='task_A') }}"},
+        environment= env2,
+        mounts= [
+            Mount(source = "/Users/ramikrispin/Personal/poc/eia-airflow/", target = "/scripts", type = "bind")
+        ]
+    )
+
+    taskD = DockerOperator(
+        task_id = "task_D",
+        image = "docker.io/rkrispin/forecast-poc:0.0.0.9011",
+        command = "/opt/forecasting-poc/bin/python3.10 /scripts/03_refresh_forecast.py",
+        docker_url="unix://var/run/docker.sock",
+        network_mode="bridge",
+        api_version="auto",
+        xcom_all= False,
+        cpus = 1,
+        mount_tmp_dir= False,
+        environment= env2,
         mounts= [
             Mount(source = "/Users/ramikrispin/Personal/poc/eia-airflow/", target = "/scripts", type = "bind")
         ]
     )
 
 
-    taskD = PythonOperator(
-        task_id = "task_D",
-        
-        provide_context=True,
-        python_callable=put_values_using_xcom
-    )
-
-taskA >> taskB >> taskC
-taskA >> taskD
+taskA >> taskB >> taskC >> taskD
