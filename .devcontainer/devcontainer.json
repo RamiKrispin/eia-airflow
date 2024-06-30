@@ -35,6 +35,8 @@
         }
     },
     "mounts": [
+        "source=/Users/ramikrispin/Personal/poc/eia-airflow/data,target=/data,type=bind,consistency=cache",
+        "source=/Users/ramikrispin/Personal/poc/eia-airflow/mlruns,target=/mlruns,type=bind,consistency=cache",
         "source=/Users/ramikrispin/Personal/poc/eia-airflow/airflow/dags,target=/airflow/dags,type=bind,consistency=cache",
         "source=/Users/ramikrispin/Personal/poc/eia-airflow/airflow/scripts,target=/airflow/scripts,type=bind,consistency=cache",
         // "source=/Users/ramikrispin/Personal/poc/eia-poc/airflow/logs,target=/airflow/logs,type=bind,consistency=cache",
