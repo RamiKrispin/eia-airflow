@@ -1,6 +1,0 @@
-artifact_location: file:///scripts/airflow/mlruns
-creation_time: 1716916247686
-experiment_id: '888824980765390149'
-last_update_time: 1716916247686
-lifecycle_stage: active
-name: data_refresh

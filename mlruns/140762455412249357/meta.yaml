@@ -1,0 +1,6 @@
+artifact_location: file:///mlruns/
+creation_time: 1719755137457
+experiment_id: '140762455412249357'
+last_update_time: 1719755137457
+lifecycle_stage: active
+name: data_refresh
