@@ -16,22 +16,28 @@ facets = os.getenv("facets")
 offset = os.getenv("offset")
 
 
-# Set MLflow experiment
-mlflow.set_tracking_uri(mlflow_path)
-ex = mlflow.get_experiment_by_name(experiment_name)
-if ex is None:
-    new_experiment = True
-    mlflow.create_experiment(name = experiment_name,
-                             artifact_location= mlflow_path,
-                             tags = tags)
-else:
-    new_experiment = False
+def set_mlflow_experiment(path, experiment_name):
 
-meta = mlflow.get_experiment_by_name(experiment_name)
+    # Set MLflow experiment
+    mlflow.set_tracking_uri(mlflow_path)
+    ex = mlflow.get_experiment_by_name(experiment_name)
+    if ex is None:
+        new_experiment = True
+        mlflow.create_experiment(name = experiment_name,
+                                 artifact_location= path,
+                                 tags = tags)
+    else:
+        new_experiment = False
+
+    meta = mlflow.get_experiment_by_name(experiment_name)
+
+    return meta
 
 
-tz_utc = pytz.timezone("UTC")
-run_name = datetime.now(tz_utc).astimezone().strftime("%Y-%m-%d %H:%M %Z")
+def set_run_name():
+    tz_utc = pytz.timezone("UTC")
+    run_name = datetime.now(tz_utc).astimezone().strftime("%Y-%m-%d %H:%M %Z")
+    return run_name
 
 
 run_tags = {
@@ -39,9 +45,14 @@ run_tags = {
      "data_refresh": False
 }
 
-run = mlflow.start_run(run_name = run_name, 
-                       experiment_id= meta.experiment_id, 
-                       tags = run_tags)
+
+def update_tags(run_name, experiment_id, tags):
+    run = mlflow.start_run(run_name = run_name, 
+                           experiment_id= experiment_id, 
+                           tags = tags)
+    
+    
+    return run
 
 output = {
     "run_name": run_name,

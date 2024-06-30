@@ -23,9 +23,8 @@ ref = eval(xcom)
 run_name = ref["run_name"]
 experiment_id = ref["experiment_id"]
 run_id = ref["run_id"]
-
-
-
+print(run_id)
+print(xcom)
 # Functions
 def get_tags(run_id):
     run_meta = mlflow.get_run(run_id = run_id)
@@ -82,4 +81,3 @@ with mlflow.start_run(run_id = run_id,
 
 
 t = get_tags(run_id = run_id)
-
